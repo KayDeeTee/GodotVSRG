@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bflj1tkxbb21m"]
+
+[ext_resource type="Shader" path="res://Hidden.gdshader" id="1_64pgv"]
+
+[resource]
+shader = ExtResource("1_64pgv")
+shader_parameter/h_end_y = null
+shader_parameter/h_start_y = null
+shader_parameter/s_end_y = null
+shader_parameter/s_start_y = null

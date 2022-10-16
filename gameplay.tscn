@@ -1,0 +1,354 @@
+[gd_scene load_steps=40 format=3 uid="uid://dktuf4kcmx7uj"]
+
+[ext_resource type="Texture2D" uid="uid://xl0vtchyvr23" path="res://sprites/white.png" id="1_44b2x"]
+[ext_resource type="Texture2D" uid="uid://dhegt1pvb5r0i" path="res://sprites/black.png" id="1_782yu"]
+[ext_resource type="Texture2D" uid="uid://n5aay2rkpcff" path="res://sprites/bg.png" id="1_avlst"]
+[ext_resource type="Script" path="res://Composer.gd" id="1_ireki"]
+[ext_resource type="Texture2D" uid="uid://bvxuuma2b4l1h" path="res://sprites/receptor-unpressed.png" id="4_l0dk4"]
+[ext_resource type="Script" path="res://receptor.gd" id="6_4xto3"]
+[ext_resource type="Texture2D" uid="uid://c3lb618fcctix" path="res://sprites/MA.png" id="7_5k1yw"]
+[ext_resource type="Script" path="res://Judgement.gd" id="8_susp6"]
+[ext_resource type="Texture2D" uid="uid://cyayfrft7hoxp" path="res://sprites/hiterror.png" id="9_aq87c"]
+[ext_resource type="Script" path="res://HitError.gd" id="9_iihqm"]
+[ext_resource type="Script" path="res://fps.gd" id="9_tmo4d"]
+[ext_resource type="Texture2D" uid="uid://flyj3kx00cn1" path="res://sprites/avg.png" id="10_snx41"]
+[ext_resource type="Texture2D" uid="uid://ds8m4ye6qprk" path="res://sprites/toastie.png" id="11_rqn17"]
+[ext_resource type="Script" path="res://ReceptorPos.gd" id="12_3xgqk"]
+[ext_resource type="Script" path="res://ComboRenderer.gd" id="12_jby5j"]
+[ext_resource type="Script" path="res://Toastie.gd" id="12_ugcs8"]
+[ext_resource type="Script" path="res://break_indicators.gd" id="13_03o50"]
+[ext_resource type="Script" path="res://breakSpr.gd" id="13_hggrc"]
+[ext_resource type="Script" path="res://Score.gd" id="13_mefvt"]
+[ext_resource type="AudioStream" uid="uid://106bx3lxg2mc" path="res://song/audio.mp3" id="13_ns4du"]
+[ext_resource type="Texture2D" uid="uid://d3gr81mr20vkx" path="res://sprites/purple.png" id="14_bh62m"]
+[ext_resource type="Texture2D" uid="uid://dfdfllp3j45a2" path="res://sprites/pink.png" id="15_rfsa2"]
+[ext_resource type="Script" path="res://Progressbar.gd" id="16_tugxf"]
+[ext_resource type="Script" path="res://accuracy.gd" id="17_0q6ac"]
+[ext_resource type="Script" path="res://SongTitle.gd" id="18_2qvrw"]
+[ext_resource type="Script" path="res://Counts.gd" id="18_25syx"]
+[ext_resource type="Script" path="res://avg.gd" id="19_rk4r0"]
+[ext_resource type="Shader" path="res://NPSGraph.gdshader" id="22_7l0g3"]
+[ext_resource type="Script" path="res://NPSCalc.gd" id="22_8fd3r"]
+[ext_resource type="Texture2D" uid="uid://godxn0lpbe5j" path="res://sprites/minifont.png" id="23_tbc4c"]
+[ext_resource type="Texture2D" uid="uid://c5bdn1ixwvyai" path="res://sprites/nps_area.png" id="24_f10vc"]
+[ext_resource type="AudioStream" uid="uid://qsrv3l3t8p02" path="res://sounds/clap.ogg" id="32_nn3fc"]
+
+[sub_resource type="Shader" id="Shader_e6p1o"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.0.beta2's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+uniform vec2 uv_scale;
+uniform vec2 uv_speed;
+
+uniform vec4 tint : source_color;
+
+void vertex(){
+	UV=UV*uv_scale+(vec2(TIME, TIME)*uv_speed);
+}
+
+void fragment(){
+	COLOR = tint*texture(TEXTURE, UV);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hftan"]
+shader = SubResource("Shader_e6p1o")
+shader_parameter/tint = Color(0.501961, 0.501961, 0.501961, 1)
+shader_parameter/uv_scale = Vector2(32, 32)
+shader_parameter/uv_speed = Vector2(-2, -2)
+
+[sub_resource type="Gradient" id="Gradient_xowk7"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jnxts"]
+gradient = SubResource("Gradient_xowk7")
+width = 1
+fill_from = Vector2(1, 0)
+fill_to = Vector2(1, 1)
+
+[sub_resource type="Gradient" id="Gradient_1doav"]
+colors = PackedColorArray(0.0907514, 0.0807248, 0.300571, 1, 0.343754, 0.274603, 0.473998, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_i856g"]
+gradient = SubResource("Gradient_1doav")
+fill_from = Vector2(1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gjs7w"]
+shader = ExtResource("22_7l0g3")
+shader_parameter/c2_scale = Vector2(1.5, 1.25)
+shader_parameter/c_scale = Vector2(39, 5)
+shader_parameter/font = ExtResource("23_tbc4c")
+shader_parameter/gradient = SubResource("GradientTexture2D_i856g")
+shader_parameter/line_colour = Color(1, 0.682353, 0.713726, 1)
+
+[node name="Node2d" type="Node2D"]
+
+[node name="control_z_index" type="Node2D" parent="."]
+z_index = 100
+
+[node name="control_nodes" type="Control" parent="control_z_index"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Progressbar" type="TextureProgressBar" parent="control_z_index/control_nodes"]
+layout_mode = 0
+offset_left = -192.0
+offset_top = 344.0
+offset_right = 192.0
+offset_bottom = 360.0
+max_value = 384.0
+value = 192.0
+nine_patch_stretch = true
+texture_under = ExtResource("14_bh62m")
+texture_progress = ExtResource("15_rfsa2")
+script = ExtResource("16_tugxf")
+
+[node name="SongTitle" type="RichTextLabel" parent="control_z_index/control_nodes/Progressbar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -4.0
+offset_bottom = 21.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center]TITLE[/center]"
+scroll_active = false
+script = ExtResource("18_2qvrw")
+
+[node name="SongShadow" type="RichTextLabel" parent="control_z_index/control_nodes/Progressbar/SongTitle"]
+self_modulate = Color(0, 0, 0, 1)
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 1.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center]TITLE[/center]"
+scroll_active = false
+
+[node name="accuracy" type="RichTextLabel" parent="control_z_index/control_nodes"]
+layout_mode = 0
+offset_top = -72.0
+offset_right = 150.0
+offset_bottom = -47.0
+text = "100.00%"
+script = ExtResource("17_0q6ac")
+
+[node name="count_bg" type="TextureRect" parent="control_z_index/control_nodes"]
+self_modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 0
+offset_left = -316.0
+offset_top = -137.0
+offset_right = -221.0
+offset_bottom = 7.0
+texture = ExtResource("1_782yu")
+
+[node name="counts" type="RichTextLabel" parent="control_z_index/control_nodes"]
+layout_mode = 0
+offset_left = -275.0
+offset_top = -134.0
+offset_right = -212.0
+offset_bottom = 33.0
+bbcode_enabled = true
+text = "0
+0
+0
+0
+0
+0"
+script = ExtResource("18_25syx")
+
+[node name="avg" type="RichTextLabel" parent="control_z_index/control_nodes"]
+layout_mode = 1
+offset_left = -316.0
+offset_top = -157.0
+offset_right = -221.0
+offset_bottom = -124.0
+bbcode_enabled = true
+text = "[center]0.0ms[/center]"
+script = ExtResource("19_rk4r0")
+
+[node name="fps" type="RichTextLabel" parent="control_z_index/control_nodes"]
+layout_mode = 1
+offset_left = 435.0
+offset_top = 339.0
+offset_right = 638.0
+offset_bottom = 364.0
+bbcode_enabled = true
+text = "[right]42069 UPS[/right]"
+script = ExtResource("9_tmo4d")
+
+[node name="counts_labels" type="RichTextLabel" parent="control_z_index/control_nodes"]
+layout_mode = 1
+offset_left = -313.0
+offset_top = -134.0
+offset_right = -283.0
+offset_bottom = 7.0
+bbcode_enabled = true
+text = "[right]MA
+PF
+GR
+GD
+BD
+MS"
+
+[node name="camera" type="Camera2D" parent="."]
+current = true
+
+[node name="bg" type="Sprite2D" parent="."]
+texture_filter = 2
+texture_repeat = 2
+material = SubResource("ShaderMaterial_hftan")
+position = Vector2(-0.999947, 0.499991)
+scale = Vector2(20, 20)
+texture = ExtResource("1_avlst")
+region_enabled = true
+region_rect = Rect2(0, 0, 64, 64)
+
+[node name="toastie" type="Sprite2D" parent="."]
+position = Vector2(376, 536)
+texture = ExtResource("11_rqn17")
+script = ExtResource("12_ugcs8")
+
+[node name="lane-outline" type="Sprite2D" parent="."]
+scale = Vector2(392, 720)
+texture = ExtResource("1_44b2x")
+
+[node name="lane" type="Sprite2D" parent="."]
+scale = Vector2(384, 720)
+texture = ExtResource("1_782yu")
+
+[node name="Gameplay" type="Node2D" parent="."]
+script = ExtResource("1_ireki")
+
+[node name="break_indicators" type="Node2D" parent="Gameplay"]
+position = Vector2(0, 300)
+script = ExtResource("13_03o50")
+
+[node name="0" type="Sprite2D" parent="Gameplay/break_indicators"]
+position = Vector2(-144, -300)
+scale = Vector2(96, 11.25)
+texture = SubResource("GradientTexture2D_jnxts")
+script = ExtResource("13_hggrc")
+
+[node name="1" type="Sprite2D" parent="Gameplay/break_indicators"]
+position = Vector2(-48, -300)
+scale = Vector2(96, 11.25)
+texture = SubResource("GradientTexture2D_jnxts")
+script = ExtResource("13_hggrc")
+col = 1
+
+[node name="2" type="Sprite2D" parent="Gameplay/break_indicators"]
+position = Vector2(48, -300)
+scale = Vector2(96, 11.25)
+texture = SubResource("GradientTexture2D_jnxts")
+script = ExtResource("13_hggrc")
+col = 2
+
+[node name="3" type="Sprite2D" parent="Gameplay/break_indicators"]
+position = Vector2(144, -300)
+scale = Vector2(96, 11.25)
+texture = SubResource("GradientTexture2D_jnxts")
+script = ExtResource("13_hggrc")
+col = 3
+
+[node name="receptors" type="Node2D" parent="Gameplay"]
+position = Vector2(0, 300)
+script = ExtResource("12_3xgqk")
+
+[node name="0" type="Sprite2D" parent="Gameplay/receptors"]
+texture_filter = 1
+position = Vector2(-144, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("4_l0dk4")
+script = ExtResource("6_4xto3")
+input_str = "col_0"
+
+[node name="1" type="Sprite2D" parent="Gameplay/receptors"]
+texture_filter = 1
+position = Vector2(-48, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("4_l0dk4")
+script = ExtResource("6_4xto3")
+input_str = "col_1"
+
+[node name="2" type="Sprite2D" parent="Gameplay/receptors"]
+texture_filter = 1
+position = Vector2(48, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("4_l0dk4")
+script = ExtResource("6_4xto3")
+input_str = "col_2"
+
+[node name="3" type="Sprite2D" parent="Gameplay/receptors"]
+texture_filter = 1
+position = Vector2(144, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("4_l0dk4")
+script = ExtResource("6_4xto3")
+input_str = "col_3"
+
+[node name="judgement" type="Sprite2D" parent="."]
+texture_filter = 2
+position = Vector2(0, -100)
+scale = Vector2(0.5, 0.5)
+z_index = 90
+texture = ExtResource("7_5k1yw")
+script = ExtResource("8_susp6")
+
+[node name="hiterrorcenter" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(1, 10)
+z_index = 100
+texture = ExtResource("9_aq87c")
+
+[node name="hiterroravg" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -14)
+z_index = 100
+texture = ExtResource("10_snx41")
+
+[node name="nps" type="Sprite2D" parent="."]
+texture_filter = 1
+material = SubResource("ShaderMaterial_gjs7w")
+position = Vector2(-460, 260)
+scale = Vector2(2, 2)
+z_index = 100
+texture = ExtResource("24_f10vc")
+script = ExtResource("22_8fd3r")
+
+[node name="hiterror" type="Sprite2D" parent="."]
+scale = Vector2(1, 10)
+z_index = 100
+script = ExtResource("9_iihqm")
+
+[node name="Combo" type="Node2D" parent="."]
+position = Vector2(0, -200)
+script = ExtResource("12_jby5j")
+
+[node name="Score" type="Node2D" parent="."]
+position = Vector2(480, -320)
+script = ExtResource("13_mefvt")
+
+[node name="audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_ns4du")
+volume_db = -20.0
+
+[node name="clap" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("32_nn3fc")
+volume_db = -17.5
+
+[node name="hitsound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("32_nn3fc")
+volume_db = -15.0
+max_polyphony = 16
