@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://cp3o237s5wfnd"]
+[gd_scene load_steps=44 format=3 uid="uid://cp3o237s5wfnd"]
 
 [ext_resource type="Texture2D" uid="uid://xl0vtchyvr23" path="res://sprites/white.png" id="1_44b2x"]
 [ext_resource type="Texture2D" uid="uid://dhegt1pvb5r0i" path="res://sprites/black.png" id="1_782yu"]
@@ -11,13 +11,17 @@
 [ext_resource type="Texture2D" uid="uid://cyayfrft7hoxp" path="res://sprites/hiterror.png" id="9_aq87c"]
 [ext_resource type="Script" path="res://code/widgets/HitError.gd" id="9_iihqm"]
 [ext_resource type="Script" path="res://code/widgets/FPS.gd" id="9_tmo4d"]
+[ext_resource type="Texture2D" uid="uid://dan1yll6tx37w" path="res://sprites/hp-back.png" id="10_nd8nw"]
 [ext_resource type="Texture2D" uid="uid://flyj3kx00cn1" path="res://sprites/avg.png" id="10_snx41"]
+[ext_resource type="Texture2D" uid="uid://c0eeoyjcecnob" path="res://sprites/hp-front.png" id="11_gnhxh"]
 [ext_resource type="Texture2D" uid="uid://ds8m4ye6qprk" path="res://sprites/toastie.png" id="11_rqn17"]
 [ext_resource type="Script" path="res://code/widgets/ReceptorPos.gd" id="12_3xgqk"]
 [ext_resource type="Script" path="res://code/widgets/ComboRenderer.gd" id="12_jby5j"]
+[ext_resource type="Texture2D" uid="uid://bknxyqathkhos" path="res://sprites/hp-bar.png" id="12_u4vn5"]
 [ext_resource type="Script" path="res://code/widgets/Toastie.gd" id="12_ugcs8"]
 [ext_resource type="Script" path="res://code/widgets/BreakIndicators.gd" id="13_03o50"]
 [ext_resource type="Script" path="res://code/widgets/breakSpr.gd" id="13_hggrc"]
+[ext_resource type="Script" path="res://scenes/HP.gd" id="13_kbgan"]
 [ext_resource type="Script" path="res://code/widgets/Score.gd" id="13_mefvt"]
 [ext_resource type="Texture2D" uid="uid://d3gr81mr20vkx" path="res://sprites/purple.png" id="14_bh62m"]
 [ext_resource type="Texture2D" uid="uid://dfdfllp3j45a2" path="res://sprites/pink.png" id="15_rfsa2"]
@@ -55,8 +59,8 @@ void fragment(){
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hftan"]
 shader = SubResource("Shader_e6p1o")
 shader_parameter/tint = Color(0.501961, 0.501961, 0.501961, 1)
-shader_parameter/uv_scale = Vector2(32, 32)
-shader_parameter/uv_speed = Vector2(-2, -2)
+shader_parameter/uv_scale = Vector2(20, 11.25)
+shader_parameter/uv_speed = Vector2(-0.6, -0.6)
 
 [sub_resource type="Gradient" id="Gradient_xowk7"]
 colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1)
@@ -83,6 +87,9 @@ shader_parameter/gradient = SubResource("GradientTexture2D_i856g")
 shader_parameter/line_colour = Color(1, 0.682353, 0.713726, 1)
 
 [node name="Node2d" type="Node2D"]
+
+[node name="camera" type="Camera2D" parent="."]
+current = true
 
 [node name="control_z_index" type="Node2D" parent="."]
 z_index = 100
@@ -147,18 +154,22 @@ script = ExtResource("17_0q6ac")
 [node name="count_bg" type="TextureRect" parent="control_z_index/control_nodes"]
 self_modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 0
-offset_left = -316.0
-offset_top = -137.0
-offset_right = -221.0
-offset_bottom = 7.0
+offset_left = -327.0
+offset_top = -141.0
+offset_right = -213.0
 texture = ExtResource("1_782yu")
 
-[node name="counts" type="RichTextLabel" parent="control_z_index/control_nodes"]
+[node name="counts" type="RichTextLabel" parent="control_z_index/control_nodes/count_bg"]
+clip_contents = false
 layout_mode = 0
-offset_left = -275.0
-offset_top = -134.0
-offset_right = -212.0
-offset_bottom = 33.0
+offset_left = 41.0
+offset_top = 3.0
+offset_right = 104.0
+offset_bottom = 170.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 2
 bbcode_enabled = true
 text = "0
 0
@@ -168,49 +179,64 @@ text = "0
 0"
 script = ExtResource("18_25syx")
 
-[node name="avg" type="RichTextLabel" parent="control_z_index/control_nodes"]
+[node name="counts_labels" type="RichTextLabel" parent="control_z_index/control_nodes/count_bg"]
+clip_contents = false
 layout_mode = 1
-offset_left = -316.0
-offset_top = -157.0
-offset_right = -221.0
-offset_bottom = -124.0
+offset_left = 1.0
+offset_top = 3.0
+offset_right = 37.0
+offset_bottom = 144.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 0
+bbcode_enabled = true
+text = "[right][color=#8aebf1]MA [/color] 
+[color=#f4b41b]PF[/color]
+[color=#b6d53c]GR[/color]
+[color=#3978a8]GD[/color]
+[color=#8e478c]BD[/color]
+[color=#e6482e]MS[/color]"
+
+[node name="avg" type="RichTextLabel" parent="control_z_index/control_nodes/count_bg"]
+layout_mode = 1
+offset_top = -20.0
+offset_right = 114.0
+offset_bottom = 13.0
 bbcode_enabled = true
 text = "[center]0.0ms[/center]"
 script = ExtResource("19_rk4r0")
 
 [node name="fps" type="RichTextLabel" parent="control_z_index/control_nodes"]
 layout_mode = 1
-offset_left = 435.0
-offset_top = 339.0
-offset_right = 638.0
-offset_bottom = 364.0
+offset_left = 432.0
+offset_top = 338.0
+offset_right = 635.0
+offset_bottom = 363.0
 bbcode_enabled = true
 text = "[right]42069 UPS[/right]"
 script = ExtResource("9_tmo4d")
 
-[node name="counts_labels" type="RichTextLabel" parent="control_z_index/control_nodes"]
-layout_mode = 1
-offset_left = -313.0
-offset_top = -134.0
-offset_right = -283.0
-offset_bottom = 7.0
-bbcode_enabled = true
-text = "[right]MA
-PF
-GR
-GD
-BD
-MS"
-
-[node name="camera" type="Camera2D" parent="."]
-current = true
+[node name="hp" type="TextureProgressBar" parent="control_z_index/control_nodes"]
+texture_filter = 1
+layout_mode = 0
+offset_left = -624.0
+offset_top = -344.0
+offset_right = -368.0
+offset_bottom = -328.0
+max_value = 256.0
+value = 50.0
+texture_under = ExtResource("10_nd8nw")
+texture_over = ExtResource("11_gnhxh")
+texture_progress = ExtResource("12_u4vn5")
+script = ExtResource("13_kbgan")
 
 [node name="bg" type="Sprite2D" parent="."]
 texture_filter = 2
 texture_repeat = 2
 material = SubResource("ShaderMaterial_hftan")
 position = Vector2(-0.999947, 0.499991)
-scale = Vector2(20, 20)
+scale = Vector2(20, 11.25)
 texture = ExtResource("1_avlst")
 region_enabled = true
 region_rect = Rect2(0, 0, 64, 64)
@@ -321,7 +347,7 @@ texture = ExtResource("10_snx41")
 [node name="nps" type="Sprite2D" parent="."]
 texture_filter = 1
 material = SubResource("ShaderMaterial_gjs7w")
-position = Vector2(-460, 260)
+position = Vector2(-497, 280)
 scale = Vector2(2, 2)
 z_index = 100
 texture = ExtResource("24_f10vc")

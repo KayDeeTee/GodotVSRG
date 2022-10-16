@@ -13,6 +13,10 @@ var title
 var receptor_con
 var nps
 var toastie
+var hp
+
+var health = 256
+var MAX_HP = 256
 
 var user_settings = UserSettings.new()
 
@@ -22,6 +26,7 @@ var jCount = [0,0,0,0,0,0]
 var total_notes = 0
 var current_mean = 0
 
+var life_change = [2,1,-1,-4,-12,-32]
 var colors = [Color("#8aebf1"),Color("#f4b41b"),Color("#b6d53c"),Color("#3978a8"),Color("#8e478c"),Color("#e6482e")]
 var windows = [22500, 45000, 90000, 135000, 180000]
 enum WINDOWS{
@@ -100,6 +105,12 @@ func DoJudge(j, column):
 		
 	if j >= 3:
 		break_spr[column].self_modulate = colors[j]
+		
+	health = clamp(health+life_change[j], 0, MAX_HP)
+	hp.value = (health/float(MAX_HP))*hp.max_value
+	
+	if health == 0:
+		composer.song_failed = true
 
 
 var wife3_mine_hit_weight = -7.0

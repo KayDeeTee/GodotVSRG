@@ -26,6 +26,8 @@ var combo = 0
 
 const usec = 1000000
 
+var song_failed = false
+
 var clap_index = 0
 
 var audiofilename = ""
@@ -71,6 +73,13 @@ func _process(delta):
 	check_to_despawn_notes()
 	check_to_play_clap()
 	
+	if song_failed and Global.user_settings.immediate_fail: #normally you'd just return to song select or a retry menu but...
+		get_tree().quit()
+		
+	if time > chart.duration + usec*2.5:
+		get_tree().quit()
+		
+	
 func check_to_play_clap():
 	if !Global.user_settings.clap:
 		return
@@ -81,7 +90,6 @@ func check_to_play_clap():
 			clap.play(0)
 			clap_index += 1
 		
-
 func check_to_spawn_notes():
 	for x in range(column_count):
 		var cf = chart.columns[x]

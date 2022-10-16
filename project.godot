@@ -52,6 +52,7 @@ Global="*res://code/gameplay/Global.gd"
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/vsync/vsync_mode=0
+window/stretch/mode="viewport"
 
 [input]
 
