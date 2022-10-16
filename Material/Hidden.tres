@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dgbxk1ftoy1wu"]
 
 [ext_resource type="Shader" path="res://shaders/Hidden.gdshader" id="1_64pgv"]
 

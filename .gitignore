@@ -1,2 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
+
+export_presets.cfg
+song/audio.mp3
+song/chart.osu

@@ -1,38 +1,12 @@
 extends Node2D
 
-#this is not exactly how you should store charts
-var chart = """
-0:2000000;
-1:2500000;
-2:3000000;
-3:3000000;
-2:3500000:4000000;
-0:5300000;
-1:5400000;
-2:5500000;
-3:5600000;
-"""
-
-#but im lazy
-var sv = """
-1:0;
-1:3.5;
-1:4;
-1:4.5;
-1:5.0;
-"""
-
 var n_mat = preload("res://Material/Hidden.tres")
 
 var cScore = 0
 var mScore = 0
 
 var osuScore = 0
-var osumScore = 0
 
-var scroll_vels = []
-
-var columns = []
 var column_count = 4
 
 var spawned_notes = []
@@ -47,117 +21,18 @@ var spawn_distance = 500000
 var t_begin = 0
 var t_delay = 0
 var alreadyplayed = false
-var song_duration = 0
 
 var combo = 0
 
 const usec = 1000000
 
-var sv_lookup_start = 0
-
-var clap_times = []
 var clap_index = 0
-
-#this is just so scroll velocities work
-func get_adjusted_time(in_time, update_min=false):
-	var sv_index = -1
-	for svi in range(sv_lookup_start, len(scroll_vels)):
-		var vel_change = scroll_vels[svi]
-		if vel_change.y > in_time:
-			sv_index = svi
-			break
-	if update_min:
-		sv_lookup_start = sv_index
-	if sv_index == 0:
-		return in_time
-	if sv_index != -1:
-		var lerp_amount = (float(in_time)-scroll_vels[sv_index-1].y)/(scroll_vels[sv_index].y-scroll_vels[sv_index-1].y)
-		return lerp(scroll_vels[sv_index-1].z, scroll_vels[sv_index].z, lerp_amount)
-	sv_index = len(scroll_vels)-1
-	
-	var out_time = ((in_time-scroll_vels[sv_index].y)*scroll_vels[sv_index].x)+scroll_vels[sv_index].z
-	
-	return out_time
 
 var audiofilename = ""
 var audioleadin = 0
 var bpm = -1
 
-func parse_osu(directory, file):
-	var f = FileAccess.open(directory+file, FileAccess.READ)
-	var lines = f.get_as_text().split("\n",false)
-	var parsemode = null
-	var last_notes = []
-	var last_sv_time = 0
-	var prev_sv_vel = 1
-	for x in range(column_count):
-		last_notes.append(null)
-	for line in lines:
-		if line[0] == "[":
-			parsemode = line
-			parsemode = parsemode.left(-2)
-			parsemode = parsemode.right(-1)
-			print(parsemode)
-		if parsemode == "General":
-			if line.begins_with("AudioFilename:"):
-				audiofilename = line.split(":")[1]
-			if line.begins_with("AudioLeadIn:"):
-				var _audioleadin = line.split(":")[1].to_int()
-				if _audioleadin > 0:
-					audioleadin = _audioleadin
-		if parsemode == "Metadata":
-			if line.begins_with("Title:"):
-				Global.set_title(line.split(":")[1])
-		if parsemode == "TimingPoints":
-			var sv = line.split(",")
-			if len(sv) < 2:
-				continue
-			var sv1 = sv[1].to_float()
-			if bpm == -1 and sv1 > 0:
-				bpm = sv1
-			var velocity = 1
-			if sv1 < 0:
-				velocity = (100.0)/abs(sv1)
-				var v = 1-velocity
-				velocity = 1+(v/16.0)
-			
-			var vel_time = last_sv_time
-			last_sv_time = (sv[0].to_int()+audioleadin)*1000
-			scroll_vels.append( Vector3(velocity, vel_time, 0) )
-		if parsemode == "HitObjects":
-			var note = line.split(",",false)
-			if len(note) < 5:
-				continue
-			var n = NoteInfo.new()
-			osumScore += 320
-			n.c = (note[0].to_int()-64)/128
-			n.t = note[2].to_int()*1000+(audioleadin*1000)
-			
-			if note[3].to_int() == 128:
-				n.t2 = note[5].split(":")[0].to_int()*1000+(audioleadin*1000)
-				n.h = true
-			else:
-				n.h = false
-				
-			if len(clap_times) == 0:
-				clap_times.append(n.t)
-			else:
-				if clap_times[len(clap_times)-1] < n.t:
-					clap_times.append(n.t)
-				
-			if columns[n.c] == null:
-				columns[n.c] = n
-			else:
-				last_notes[n.c].n = n
-			last_notes[n.c] = n
-			
-	for x in range(column_count):
-		if last_notes[x].t > song_duration:
-			song_duration = last_notes[x].t
-		if last_notes[x].h:
-			if last_notes[x].t2 > song_duration:
-				song_duration = last_notes[x].t2
-
+var chart = null
 
 func _ready():
 	Global.composer = self
@@ -170,29 +45,21 @@ func _ready():
 	n_mat.set_shader_parameter("s_start_y", Global.user_settings.sudden_start_y)
 	
 	t_begin = Time.get_ticks_usec()
-	var last_notes = []
 	for x in range(column_count):
-		columns.append(null)
-		last_notes.append(null)
-		spawned_notes.append([])
+		spawned_notes.append([])	
 	
 	audio = get_node("../audio")
 	clap = get_node("../clap")
 	hitsound = get_node("../hitsound")
 	
-	parse_osu("res://song/", "chart.osu")
-	
-	for x in range(1,len(scroll_vels)):
-		scroll_vels[x].z = scroll_vels[x-1].z + scroll_vels[x-1].x*(scroll_vels[x].y-scroll_vels[x-1].y)
-	
-	#the scroll vels from osu arent compatible for some reason with my sv method so just ignore them ig 	
-	#scroll_vels = [Vector3(1,0,0)]
+	chart = Chart.new()
+	chart.load_chart("res://song/", "chart.osu")
 
 				
 func _process(delta):
 	time = Global.song_time()
 	
-	Global.SetProgress(time/song_duration)
+	Global.SetProgress(time/chart.duration)
 	
 	if time >= 0 and !audio.playing and !alreadyplayed:
 		t_song_zero = Time.get_ticks_usec()
@@ -207,8 +74,8 @@ func _process(delta):
 func check_to_play_clap():
 	if !Global.user_settings.clap:
 		return
-	if clap_index < len(clap_times):
-		var ct = clap_times[clap_index]
+	if clap_index < len(chart.clap_times):
+		var ct = chart.clap_times[clap_index]
 		var _time = Global.song_time()+Global.user_settings.note_global_offset-ct
 		if _time > 0:
 			clap.play(0)
@@ -217,11 +84,11 @@ func check_to_play_clap():
 
 func check_to_spawn_notes():
 	for x in range(column_count):
-		var cf = columns[x]
+		var cf = chart.columns[x]
 		var check = cf != null
 		while check and cf.t < Global.song_time()+spawn_distance+Global.user_settings.note_global_offset:
 			spawn_note(cf)
-			columns[x] = cf.n
+			chart.columns[x] = cf.n
 			cf = cf.n
 			check = cf != null
 			
@@ -299,7 +166,7 @@ func handle_score(noteobj,t):
 	if combo > 0 and combo % 100 == 0:
 		Global.DoToastie()
 		
-	Global.score.update_score((osuScore*1000000.0)/float(osumScore))
+	Global.score.update_score((osuScore*1000000.0)/float(chart.max_score))
 		
 	cScore += Global.wife3(t/float(usec), 1)
 	mScore += 2
