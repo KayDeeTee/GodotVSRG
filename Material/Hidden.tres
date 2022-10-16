@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bflj1tkxbb21m"]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
 
-[ext_resource type="Shader" path="res://Hidden.gdshader" id="1_64pgv"]
+[ext_resource type="Shader" path="res://shaders/Hidden.gdshader" id="1_64pgv"]
 
 [resource]
 shader = ExtResource("1_64pgv")

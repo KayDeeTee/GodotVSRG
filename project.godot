@@ -12,17 +12,17 @@ _global_script_classes=[{
 "base": "Node",
 "class": &"NoteInfo",
 "language": &"GDScript",
-"path": "res://NoteInfo.gd"
+"path": "res://code/gameplay/NoteInfo.gd"
 }, {
 "base": "Sprite2D",
 "class": &"NoteObject",
 "language": &"GDScript",
-"path": "res://NoteObject.gd"
+"path": "res://code/gameplay/NoteObject.gd"
 }, {
 "base": "Node",
 "class": &"UserSettings",
 "language": &"GDScript",
-"path": "res://UserSettings.gd"
+"path": "res://code/gameplay/UserSettings.gd"
 }]
 _global_script_class_icons={
 "NoteInfo": "",
@@ -33,13 +33,13 @@ _global_script_class_icons={
 [application]
 
 config/name="VSRG"
-run/main_scene="res://gameplay.tscn"
+run/main_scene="res://scenes/gameplay.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://Global.gd"
+Global="*res://code/gameplay/Global.gd"
 
 [display]
 
