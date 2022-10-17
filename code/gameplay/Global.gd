@@ -19,6 +19,7 @@ var health = 256
 var MAX_HP = 256
 
 var user_settings = UserSettings.new()
+var results = Results.new()
 
 var break_spr = [null,null,null,null]
 
@@ -28,6 +29,49 @@ var current_mean = 0
 
 var life_change = [2,1,-1,-4,-12,-32]
 var colors = [Color("#8aebf1"),Color("#f4b41b"),Color("#b6d53c"),Color("#3978a8"),Color("#8e478c"),Color("#e6482e")]
+
+var colours = {
+	"clear":{
+		"MFC": "#66ccff",
+		"WF": "#dddddd",
+		"SDP": "#cc8800",
+		"PFC": "#eeaa00",
+		"BF": "#999999",
+		"SDG": "#448844",
+		"FC": "#66cc66",
+		"MF": "#cc6666",
+		"SDCB": "#33bbff",
+		"Clear": "#33aaff",
+		"Failed": "#e61e25",
+		"Invalid": "#e61e25",
+		"NoPlay": "#666666",
+		"None": "#666666"
+	},
+	"grade": {
+		"AAAAA": "#ffffff",
+		"AAAA": "#66ccff",
+		"AAA": "#eebb00", 
+		"AA": "#66cc66",
+		"A": "#da5757",
+		"B": "#5b78bb",
+		"C": "#c97bff",
+		"D": "#8c6239",
+		"E": "#000000",
+		"F": "#cdcdcd",
+		"NONE": "#666666"
+	},
+	"judgements":{
+		"W1": "#99ccff",
+		"W2": "#f2cb30",
+		"W3": "#14cc8f",
+		"W4": "#1ab2ff",
+		"W5": "#ff1ab3",
+		"MS": "#cc2929",
+		"OK": "#f2cb30",
+		"NG": "#cc2929"
+	}
+}
+
 var windows = [22500, 45000, 90000, 135000, 180000]
 enum WINDOWS{
 	MA = 0,
@@ -110,8 +154,8 @@ func DoJudge(j, column):
 	hp.value = (health/float(MAX_HP))*hp.max_value
 	
 	if health == 0:
+		results.on_fail()
 		composer.song_failed = true
-
 
 var wife3_mine_hit_weight = -7.0
 var wife3_hold_drop_weight = -4.5
@@ -150,4 +194,37 @@ func werwerwerwerf(x):
 	var y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * exp(-x * x);
 
 	return s * y;
+	
+func WifeAccToGrade(acc):
+	if acc >= 99.9935:
+		return "AAAAA"
+	if acc >= 99.980:
+		return "AAAA:"
+	if acc >= 99.970:
+		return "AAAA."
+	if acc >= 99.955:
+		return "AAAA"
+	if acc >= 99.90:
+		return "AAA:"
+	if acc >= 99.80:
+		return "AAA,"
+	if acc >= 99.70:
+		return "AAA"
+	if acc >= 99.00:
+		return "AA:"
+	if acc >= 96.50:
+		return "AA."
+	if acc >= 93.00:
+		return "AA"
+	if acc >= 90.00:
+		return "A:"
+	if acc >= 85.00:
+		return "A."
+	if acc >= 80.00:
+		return "A"
+	if acc >= 70.00:
+		return "B"
+	if acc >= 60.00:
+		return "C"
+	return "D"
 

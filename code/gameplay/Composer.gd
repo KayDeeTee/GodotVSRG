@@ -56,7 +56,10 @@ func _ready():
 	
 	chart = Chart.new()
 	chart.load_chart("res://song/", "chart.osu")
-
+	
+	Global.results.reset()
+	Global.results.song_start = Time.get_ticks_usec()
+	Global.results.song_start = Time.get_ticks_usec()+chart.duration
 				
 func _process(delta):
 	time = Global.song_time()
@@ -65,6 +68,10 @@ func _process(delta):
 	
 	if time >= 0 and !audio.playing and !alreadyplayed:
 		t_song_zero = Time.get_ticks_usec()
+		
+		Global.results.song_start = Global.song_time()
+		Global.results.song_end   = Global.song_time()+chart.duration
+		
 		t_delay = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
 		audio.play(0)
 		alreadyplayed = true
@@ -74,12 +81,16 @@ func _process(delta):
 	check_to_play_clap()
 	
 	if song_failed and Global.user_settings.immediate_fail: #normally you'd just return to song select or a retry menu but...
-		get_tree().quit()
+		get_tree().change_scene_to_file("res://scenes/eval.tscn")
 		
-	if time > chart.duration + usec*2.5:
-		get_tree().quit()
+	if time > chart.duration:
+		#fade out audio
+		audio.volume_db = -20 - ((time-chart.duration)*15)/float(usec)
 		
-	
+		#transition to next (eval) scene
+		if time > chart.duration + usec*2.5:
+			get_tree().change_scene_to_file("res://scenes/eval.tscn")
+			
 func check_to_play_clap():
 	if !Global.user_settings.clap:
 		return
@@ -129,19 +140,24 @@ func check_to_despawn_notes():
 					if n.isheld:
 						if n.life < 0:
 							n.missed()
+							Global.results.add_hit( Global.song_time(), _time-n.t2, true, true )
 							handle_score(n, Global.windows[Global.WINDOWS.BD])
 							spawned_notes[col].remove_at(0)
 						if _time-n.t2 > Global.windows[Global.WINDOWS.BD]-n.life*usec:
 							n.completed()
+							Global.results.add_hit( Global.song_time(), _time-n.t2, false, true )
 							spawned_notes[col].remove_at(0)
 					else:
 						if _time-n.t > Global.windows[Global.WINDOWS.BD]:
 							n.missed()
+							Global.results.add_hit( Global.song_time(), _time-n.t2, true, false )
+							Global.results.add_hit( Global.song_time(), _time-n.t2, true, true )
 							handle_score(n, Global.windows[Global.WINDOWS.BD])
 							spawned_notes[col].remove_at(0)
 				else:
 					if _time-n.t > Global.windows[Global.WINDOWS.BD]:
 						n.missed()
+						Global.results.add_hit( Global.song_time(), _time-n.t, true, false )
 						handle_score(n, Global.windows[Global.WINDOWS.BD])
 						spawned_notes[col].remove_at(0)
 
@@ -199,6 +215,7 @@ func handle_hit(col):
 				if n.h != true:
 					spawned_notes[col].remove_at(0)
 				Global.add_nps_note(_time)
+				Global.results.add_hit( Global.song_time(), _time-n.t, false, false )
 
 func handle_release(col):
 	var _time = Global.song_time()+Global.user_settings.note_global_offset
@@ -206,10 +223,10 @@ func handle_release(col):
 		var n = spawned_notes[col][0]
 		if n != null:
 			if n.h:
-				if _time-n.t > -Global.windows[Global.WINDOWS.BD]:
-					n.release()
+				n.release()
 				if _time-n.t2 > Global.windows[Global.WINDOWS.BD]-n.life*usec:
 					n.completed()
+					Global.results.add_hit( Global.song_time(), _time-n.t2, false, true )
 					spawned_notes[col].remove_at(0)
 
 func _input(event):

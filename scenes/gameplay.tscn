@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://cp3o237s5wfnd"]
+[gd_scene load_steps=44 format=3 uid="uid://buy6o0vg8ef2k"]
 
 [ext_resource type="Texture2D" uid="uid://xl0vtchyvr23" path="res://sprites/white.png" id="1_44b2x"]
 [ext_resource type="Texture2D" uid="uid://dhegt1pvb5r0i" path="res://sprites/black.png" id="1_782yu"]
@@ -21,7 +21,7 @@
 [ext_resource type="Script" path="res://code/widgets/Toastie.gd" id="12_ugcs8"]
 [ext_resource type="Script" path="res://code/widgets/BreakIndicators.gd" id="13_03o50"]
 [ext_resource type="Script" path="res://code/widgets/breakSpr.gd" id="13_hggrc"]
-[ext_resource type="Script" path="res://scenes/HP.gd" id="13_kbgan"]
+[ext_resource type="Script" path="res://code/widgets/HP.gd" id="13_kbgan"]
 [ext_resource type="Script" path="res://code/widgets/Score.gd" id="13_mefvt"]
 [ext_resource type="Texture2D" uid="uid://d3gr81mr20vkx" path="res://sprites/purple.png" id="14_bh62m"]
 [ext_resource type="Texture2D" uid="uid://dfdfllp3j45a2" path="res://sprites/pink.png" id="15_rfsa2"]
@@ -37,7 +37,7 @@
 [ext_resource type="AudioStream" uid="uid://106bx3lxg2mc" path="res://song/audio.mp3" id="31_l4ojg"]
 [ext_resource type="AudioStream" uid="uid://qsrv3l3t8p02" path="res://sounds/clap.ogg" id="32_nn3fc"]
 
-[sub_resource type="Shader" id="Shader_e6p1o"]
+[sub_resource type="Shader" id="Shader_qy0yc"]
 code = "// NOTE: Shader automatically converted from Godot Engine 4.0.beta2's CanvasItemMaterial.
 
 shader_type canvas_item;
@@ -57,7 +57,7 @@ void fragment(){
 }"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hftan"]
-shader = SubResource("Shader_e6p1o")
+shader = SubResource("Shader_qy0yc")
 shader_parameter/tint = Color(0.501961, 0.501961, 0.501961, 1)
 shader_parameter/uv_scale = Vector2(20, 11.25)
 shader_parameter/uv_speed = Vector2(-0.6, -0.6)

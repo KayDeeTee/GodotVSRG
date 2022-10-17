@@ -22,6 +22,10 @@ This is not currently designed to be a playable game and thus doesn't contain a 
 
 https://user-images.githubusercontent.com/6253118/196013381-baf8337e-f0dc-4682-abcc-6ba431abd8ab.mp4
 
+## Screenshot(s)
+
+![image](https://user-images.githubusercontent.com/6253118/196020698-3422f22a-beca-415f-bb83-58eebe4f0258.png)
+
 ## How to test
 
 Charts should go into a song folder in the project root, so "res://song/" will find it, charts are made of 2 parts chart.osu and audio.mp3, you can get both from extracting them from a .osz file.
@@ -31,4 +35,5 @@ Technically these should be loaded via usr:// and engine should handle unzipping
 Keybinds are ZX,. change them in the project settings if you want different ones.
 
 Other settings are in code/gameplay/UserSettings.
+
 

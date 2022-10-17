@@ -25,6 +25,11 @@ _global_script_classes=[{
 "path": "res://code/gameplay/NoteObject.gd"
 }, {
 "base": "Node",
+"class": &"Results",
+"language": &"GDScript",
+"path": "res://code/gameplay/Results.gd"
+}, {
+"base": "Node",
 "class": &"UserSettings",
 "language": &"GDScript",
 "path": "res://code/gameplay/UserSettings.gd"
@@ -33,6 +38,7 @@ _global_script_class_icons={
 "Chart": "",
 "NoteInfo": "",
 "NoteObject": "",
+"Results": "",
 "UserSettings": ""
 }
 

@@ -89,8 +89,6 @@ func update_pos():
 		hold_obj.global_position.y = (hold_tip.global_position.y + global_position.y)/2.0
 		hold_obj.scale.y = (global_position.y-hold_tip.global_position.y)/2.0
 		
-	
-		
 func _process(delta):
 	update_pos()
 	

@@ -12,6 +12,9 @@ var clap_times = []
 var columns = []
 var duration = -1
 
+var title
+var artist
+
 var sv_lookup_start = 0
 
 func load_chart(directory, file):
@@ -53,6 +56,9 @@ func parse_osu(directory, file):
 		if parsemode == "Metadata":
 			if line.begins_with("Title:"):
 				Global.set_title(line.split(":")[1])
+				Global.results.title = line.split(":")[1]
+			if line.begins_with("Artist:"):
+				Global.results.artist = line.split(":")[1]
 		if parsemode == "TimingPoints":
 			var sv = line.split(",")
 			if len(sv) < 2:

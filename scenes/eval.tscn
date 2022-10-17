@@ -1,0 +1,192 @@
+[gd_scene load_steps=11 format=3 uid="uid://8efga5m68mwx"]
+
+[ext_resource type="Texture2D" uid="uid://n5aay2rkpcff" path="res://sprites/bg.png" id="1_pvt44"]
+[ext_resource type="Script" path="res://code/eval/Eval.gd" id="2_5d456"]
+[ext_resource type="Texture2D" uid="uid://d3mkp83wtoj0b" path="res://sprites/eval_graph_area.png" id="3_mhaca"]
+[ext_resource type="Texture2D" uid="uid://dhegt1pvb5r0i" path="res://sprites/black.png" id="4_mga1b"]
+
+[sub_resource type="Shader" id="Shader_e6p1o"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.0.beta2's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+uniform vec2 uv_scale;
+uniform vec2 uv_speed;
+
+uniform vec4 tint : source_color;
+
+void vertex(){
+	UV=UV*uv_scale+(vec2(TIME, TIME)*uv_speed);
+}
+
+void fragment(){
+	COLOR = tint*texture(TEXTURE, UV);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8tfhr"]
+shader = SubResource("Shader_e6p1o")
+shader_parameter/tint = Color(0.501961, 0.501961, 0.501961, 1)
+shader_parameter/uv_scale = Vector2(20, 11.25)
+shader_parameter/uv_speed = Vector2(-0.6, -0.6)
+
+[sub_resource type="Shader" id="Shader_iu5pb"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.0.beta2's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+uniform sampler2D bg : hint_default_white, filter_nearest;
+
+void fragment(){
+	vec4 tex = texture(TEXTURE, UV);
+	COLOR = mix(texture(bg, UV)*0.75,tex,tex.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fvdrw"]
+shader = SubResource("Shader_iu5pb")
+shader_parameter/bg = ExtResource("3_mhaca")
+
+[sub_resource type="Gradient" id="Gradient_cbxn3"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ofxqt"]
+gradient = SubResource("Gradient_cbxn3")
+
+[node name="Node2d" type="Node2D"]
+
+[node name="bg" type="Sprite2D" parent="."]
+texture_filter = 2
+texture_repeat = 2
+material = SubResource("ShaderMaterial_8tfhr")
+scale = Vector2(20, 11.25)
+texture = ExtResource("1_pvt44")
+region_enabled = true
+region_rect = Rect2(0, 0, 64, 64)
+
+[node name="ui" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="songtitle" type="RichTextLabel" parent="ui"]
+clip_contents = false
+offset_left = 528.0
+offset_top = 106.0
+offset_right = 1248.0
+offset_bottom = 328.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_font_sizes/normal_font_size = 72
+bbcode_enabled = true
+text = "[center][color=#fff]<Title>
+[font_size=32]<artist>[/font_size][/color][/center]"
+scroll_active = false
+autowrap_mode = 0
+
+[node name="grade" type="RichTextLabel" parent="ui"]
+clip_contents = false
+offset_left = 16.0
+offset_top = 32.0
+offset_right = 512.0
+offset_bottom = 328.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_font_sizes/normal_font_size = 144
+bbcode_enabled = true
+text = "[center][color=#8aebf1]AAA[/color][/center]"
+
+[node name="acc" type="RichTextLabel" parent="ui"]
+clip_contents = false
+offset_left = 16.0
+offset_top = 187.0
+offset_right = 512.0
+offset_bottom = 328.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_font_sizes/normal_font_size = 72
+bbcode_enabled = true
+text = "[center][color=#fff]100%[/color][/center]"
+
+[node name="Graph" type="TextureRect" parent="ui"]
+material = SubResource("ShaderMaterial_fvdrw")
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -752.0
+offset_top = -392.0
+offset_right = -32.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = SubResource("GradientTexture1D_ofxqt")
+
+[node name="count_bg" type="TextureRect" parent="ui"]
+self_modulate = Color(1, 1, 1, 0.501961)
+offset_left = 16.0
+offset_top = 328.0
+offset_right = 512.0
+offset_bottom = 688.0
+texture = ExtResource("4_mga1b")
+
+[node name="counts" type="RichTextLabel" parent="ui/count_bg"]
+clip_contents = false
+offset_right = 480.0
+offset_bottom = 358.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 2
+theme_override_font_sizes/normal_font_size = 36
+bbcode_enabled = true
+text = "[right]0
+0
+0
+0
+0
+0
+0[/right]"
+
+[node name="counts_labels" type="RichTextLabel" parent="ui/count_bg"]
+clip_contents = false
+offset_left = 16.0
+offset_right = 511.0
+offset_bottom = 358.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_font_sizes/normal_font_size = 36
+bbcode_enabled = true
+text = "[left][color=#8aebf1]MA [/color] 
+[color=#f4b41b]PF[/color]
+[color=#b6d53c]GR[/color]
+[color=#3978a8]GD[/color]
+[color=#8e478c]BD[/color]
+[color=#e6482e]MS[/color]
+OK
+[/left]"
+
+[node name="EvalManager" type="Node2D" parent="."]
+position = Vector2(-0.999947, 0.499991)
+scale = Vector2(20, 11.25)
+script = ExtResource("2_5d456")
+
+[node name="Camera2d" type="Camera2D" parent="."]
+current = true

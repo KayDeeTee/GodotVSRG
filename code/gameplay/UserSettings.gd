@@ -26,7 +26,7 @@ var sudden_end_y = 0 #for fade in
 var note_global_offset = 0 #offset for hitting notes ////// if you're hitting early(negative) make this positive
 var note_visual_offset = 0 #offset for rendering notes  ////// if you're hitting early(negative) make this positive too?
 
-var immediate_fail = false
+var immediate_fail = true
 
 func load_settings():
 	pass
