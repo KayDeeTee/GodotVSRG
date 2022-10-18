@@ -35,5 +35,3 @@ Technically these should be loaded via usr:// and engine should handle unzipping
 Keybinds are ZX,. change them in the project settings if you want different ones.
 
 Other settings are in code/gameplay/UserSettings.
-
-

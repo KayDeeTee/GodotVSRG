@@ -32,5 +32,8 @@ func _ready():
 func _process(delta):
 	if t < FADE_TIME:
 		t += delta
-		
+
+	var inv_time = 1.0-(t/FADE_TIME)
+	scale = Vector2(.5,.5)*lerp(1.0, .6, 1.0-(inv_time*inv_time))
+	rotation = lerp(0.0,-deg_to_rad(25.0), 1.0-(inv_time*inv_time))
 	modulate.a = 1-(t/FADE_TIME)

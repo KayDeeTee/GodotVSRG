@@ -96,7 +96,7 @@ autowrap_mode = 0
 
 [node name="grade" type="RichTextLabel" parent="ui"]
 clip_contents = false
-offset_left = 16.0
+offset_left = 32.0
 offset_top = 32.0
 offset_right = 512.0
 offset_bottom = 328.0
@@ -110,7 +110,7 @@ text = "[center][color=#8aebf1]AAA[/color][/center]"
 
 [node name="acc" type="RichTextLabel" parent="ui"]
 clip_contents = false
-offset_left = 16.0
+offset_left = 32.0
 offset_top = 187.0
 offset_right = 512.0
 offset_bottom = 328.0
@@ -139,7 +139,7 @@ texture = SubResource("GradientTexture1D_ofxqt")
 
 [node name="count_bg" type="TextureRect" parent="ui"]
 self_modulate = Color(1, 1, 1, 0.501961)
-offset_left = 16.0
+offset_left = 32.0
 offset_top = 328.0
 offset_right = 512.0
 offset_bottom = 688.0
@@ -147,7 +147,7 @@ texture = ExtResource("4_mga1b")
 
 [node name="counts" type="RichTextLabel" parent="ui/count_bg"]
 clip_contents = false
-offset_right = 480.0
+offset_right = 464.0
 offset_bottom = 358.0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2

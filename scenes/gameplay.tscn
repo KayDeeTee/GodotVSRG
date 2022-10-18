@@ -1,9 +1,10 @@
-[gd_scene load_steps=44 format=3 uid="uid://buy6o0vg8ef2k"]
+[gd_scene load_steps=54 format=3 uid="uid://buy6o0vg8ef2k"]
 
 [ext_resource type="Texture2D" uid="uid://xl0vtchyvr23" path="res://sprites/white.png" id="1_44b2x"]
 [ext_resource type="Texture2D" uid="uid://dhegt1pvb5r0i" path="res://sprites/black.png" id="1_782yu"]
 [ext_resource type="Texture2D" uid="uid://n5aay2rkpcff" path="res://sprites/bg.png" id="1_avlst"]
 [ext_resource type="Script" path="res://code/gameplay/Composer.gd" id="1_ireki"]
+[ext_resource type="Script" path="res://scenes/outline_inner.gd" id="4_eiduf"]
 [ext_resource type="Texture2D" uid="uid://bvxuuma2b4l1h" path="res://sprites/receptor-unpressed.png" id="4_l0dk4"]
 [ext_resource type="Script" path="res://code/widgets/Receptor.gd" id="6_4xto3"]
 [ext_resource type="Texture2D" uid="uid://c3lb618fcctix" path="res://sprites/MA.png" id="7_5k1yw"]
@@ -30,12 +31,16 @@
 [ext_resource type="Script" path="res://code/widgets/SongTitle.gd" id="18_2qvrw"]
 [ext_resource type="Script" path="res://code/widgets/Counts.gd" id="18_25syx"]
 [ext_resource type="Script" path="res://code/widgets/MeanAverage.gd" id="19_rk4r0"]
+[ext_resource type="Shader" path="res://scenes/outline.gdshader" id="19_ww3tj"]
 [ext_resource type="Shader" path="res://shaders/NPSGraph.gdshader" id="22_7l0g3"]
 [ext_resource type="Script" path="res://code/widgets/NPSCalc.gd" id="22_8fd3r"]
 [ext_resource type="Texture2D" uid="uid://godxn0lpbe5j" path="res://sprites/minifont.png" id="23_tbc4c"]
 [ext_resource type="Texture2D" uid="uid://c5bdn1ixwvyai" path="res://sprites/nps_area.png" id="24_f10vc"]
 [ext_resource type="AudioStream" uid="uid://106bx3lxg2mc" path="res://song/audio.mp3" id="31_l4ojg"]
 [ext_resource type="AudioStream" uid="uid://qsrv3l3t8p02" path="res://sounds/clap.ogg" id="32_nn3fc"]
+[ext_resource type="Script" path="res://scenes/screenspace_vfx.gd" id="35_fh6ew"]
+[ext_resource type="Texture2D" uid="uid://mc18ofjobt3n" path="res://sprites/outline.png" id="38_n54my"]
+[ext_resource type="Texture2D" uid="uid://d1f0o5orj5rxo" path="res://sprites/outline2.png" id="39_myf1v"]
 
 [sub_resource type="Shader" id="Shader_qy0yc"]
 code = "// NOTE: Shader automatically converted from Godot Engine 4.0.beta2's CanvasItemMaterial.
@@ -62,6 +67,30 @@ shader_parameter/tint = Color(0.501961, 0.501961, 0.501961, 1)
 shader_parameter/uv_scale = Vector2(20, 11.25)
 shader_parameter/uv_speed = Vector2(-0.6, -0.6)
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hops5"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_gpsss"]
+seamless = true
+noise = SubResource("FastNoiseLite_hops5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cdt6u"]
+shader = ExtResource("19_ww3tj")
+shader_parameter/fade = 0.0
+shader_parameter/life = 1.0
+shader_parameter/noise = SubResource("NoiseTexture2D_gpsss")
+shader_parameter/tint_black_bd = Color(0.8, 0.16, 0.8, 1)
+shader_parameter/tint_black_gd = Color(0.03, 0.22, 0.6, 1)
+shader_parameter/tint_black_gr = Color(0.06, 0.6, 0.6, 1)
+shader_parameter/tint_black_ma = Color(0.135, 0.2625, 0.9, 1)
+shader_parameter/tint_black_ms = Color(0.6, 0.09, 0.2685, 1)
+shader_parameter/tint_black_pf = Color(0.75, 0.525, 0, 1)
+shader_parameter/tint_white_bd = Color(1, 0.101961, 0.701961, 1)
+shader_parameter/tint_white_gd = Color(0.08, 0.56, 0.8, 1)
+shader_parameter/tint_white_gr = Color(0.0784314, 0.8, 0.560784, 1)
+shader_parameter/tint_white_ma = Color(0.6, 0.8, 1, 1)
+shader_parameter/tint_white_ms = Color(0.8, 0.160784, 0.160784, 1)
+shader_parameter/tint_white_pf = Color(0.94902, 0.796078, 0.188235, 1)
+
 [sub_resource type="Gradient" id="Gradient_xowk7"]
 colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1)
 
@@ -86,13 +115,81 @@ shader_parameter/font = ExtResource("23_tbc4c")
 shader_parameter/gradient = SubResource("GradientTexture2D_i856g")
 shader_parameter/line_colour = Color(1, 0.682353, 0.713726, 1)
 
+[sub_resource type="Shader" id="Shader_sib2f"]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform vec2 center_0;
+uniform vec2 center_1;
+uniform vec2 center_2;
+uniform vec2 center_3;
+uniform vec2 screen_size;
+uniform float force;
+uniform float size;
+uniform float max_size;
+
+uniform float size_0[16];
+uniform float size_1[16];
+uniform float size_2[16];
+uniform float size_3[16];
+
+uniform float feather;
+
+vec2 get_displacement(vec2 center_pos, float current_size, vec2 screen_pixel_size, vec2 screen_uv){
+	vec2 cpos = center_pos/screen_size;
+	float ratio = screen_pixel_size.x/screen_pixel_size.y;
+	vec2 scale_uv = ( screen_uv - vec2(0.5,0.5) ) / vec2(ratio, 1.0) + vec2(0.5,0.5);
+	float mask = 1.0-smoothstep(current_size-feather, current_size, length(scale_uv - cpos));
+	float length2 = length(scale_uv - cpos);
+	float mask2 = smoothstep(current_size-length2-feather, current_size-length2, length(scale_uv - cpos));
+	mask *= mask2;
+	vec2 displacement = normalize(scale_uv-cpos) * force * (1.0-current_size/max_size);
+	displacement*=mask;
+	return displacement;
+}
+
+void fragment(){
+	
+	vec2 sum_disp = vec2(0,0);
+	for(int x = 0; x < 16; x++){
+		sum_disp += get_displacement(center_0, size_0[x], SCREEN_PIXEL_SIZE, SCREEN_UV);
+		sum_disp += get_displacement(center_1, size_1[x], SCREEN_PIXEL_SIZE, SCREEN_UV);
+		sum_disp += get_displacement(center_2, size_2[x], SCREEN_PIXEL_SIZE, SCREEN_UV);
+		sum_disp += get_displacement(center_3, size_3[x], SCREEN_PIXEL_SIZE, SCREEN_UV);
+	}
+	//vec2 displacement_0 = get_displacement(center_0, size, SCREEN_PIXEL_SIZE, SCREEN_UV);
+	//vec2 displacement_1 = get_displacement(center_1, size, SCREEN_PIXEL_SIZE, SCREEN_UV);
+	//vec2 displacement_2 = get_displacement(center_2, size, SCREEN_PIXEL_SIZE, SCREEN_UV);
+	//vec2 displacement_3 = get_displacement(center_3, size, SCREEN_PIXEL_SIZE, SCREEN_UV);
+	
+	//vec2 sum_disp = displacement_0 + displacement_1 + displacement_2 + displacement_3;
+	
+	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV-sum_disp);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qcjpt"]
+shader = SubResource("Shader_sib2f")
+shader_parameter/center_0 = Vector2(384, 660)
+shader_parameter/center_1 = Vector2(554, 660)
+shader_parameter/center_2 = Vector2(724, 660)
+shader_parameter/center_3 = Vector2(896, 660)
+shader_parameter/feather = 0.04
+shader_parameter/force = 0.02
+shader_parameter/max_size = 3.0
+shader_parameter/screen_size = Vector2(1280, 720)
+shader_parameter/size = 0.166
+shader_parameter/size_0 = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+shader_parameter/size_1 = null
+shader_parameter/size_2 = null
+shader_parameter/size_3 = null
+
 [node name="Node2d" type="Node2D"]
 
 [node name="camera" type="Camera2D" parent="."]
 current = true
 
 [node name="control_z_index" type="Node2D" parent="."]
-z_index = 100
+z_index = 200
 
 [node name="control_nodes" type="Control" parent="control_z_index"]
 layout_mode = 3
@@ -181,7 +278,7 @@ script = ExtResource("18_25syx")
 
 [node name="counts_labels" type="RichTextLabel" parent="control_z_index/control_nodes/count_bg"]
 clip_contents = false
-layout_mode = 1
+layout_mode = 0
 offset_left = 1.0
 offset_top = 3.0
 offset_right = 37.0
@@ -199,7 +296,7 @@ text = "[right][color=#8aebf1]MA [/color]
 [color=#e6482e]MS[/color]"
 
 [node name="avg" type="RichTextLabel" parent="control_z_index/control_nodes/count_bg"]
-layout_mode = 1
+layout_mode = 0
 offset_top = -20.0
 offset_right = 114.0
 offset_bottom = 13.0
@@ -208,7 +305,7 @@ text = "[center]0.0ms[/center]"
 script = ExtResource("19_rk4r0")
 
 [node name="fps" type="RichTextLabel" parent="control_z_index/control_nodes"]
-layout_mode = 1
+layout_mode = 0
 offset_left = 432.0
 offset_top = 338.0
 offset_right = 635.0
@@ -235,11 +332,38 @@ script = ExtResource("13_kbgan")
 texture_filter = 2
 texture_repeat = 2
 material = SubResource("ShaderMaterial_hftan")
-position = Vector2(-0.999947, 0.499991)
+position = Vector2(0, 0.5)
 scale = Vector2(20, 11.25)
 texture = ExtResource("1_avlst")
 region_enabled = true
 region_rect = Rect2(0, 0, 64, 64)
+
+[node name="outline_left" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(-197, 0)
+scale = Vector2(0.999999, 720)
+texture = ExtResource("38_n54my")
+
+[node name="outline_inner" type="Sprite2D" parent="outline_left"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_cdt6u")
+position = Vector2(1.67489e-05, 0)
+scale = Vector2(1, 1)
+texture = ExtResource("39_myf1v")
+script = ExtResource("4_eiduf")
+
+[node name="outline_right" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(197, 0)
+scale = Vector2(1, 720)
+texture = ExtResource("38_n54my")
+
+[node name="outline_inner" type="Sprite2D" parent="outline_right"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_cdt6u")
+position = Vector2(1.67489e-05, 0)
+scale = Vector2(1, 1)
+texture = ExtResource("39_myf1v")
 
 [node name="toastie" type="Sprite2D" parent="."]
 position = Vector2(376, 536)
@@ -247,7 +371,8 @@ texture = ExtResource("11_rqn17")
 script = ExtResource("12_ugcs8")
 
 [node name="lane-outline" type="Sprite2D" parent="."]
-scale = Vector2(392, 720)
+visible = false
+scale = Vector2(386, 720)
 texture = ExtResource("1_44b2x")
 
 [node name="lane" type="Sprite2D" parent="."]
@@ -365,6 +490,17 @@ script = ExtResource("12_jby5j")
 [node name="Score" type="Node2D" parent="."]
 position = Vector2(480, -320)
 script = ExtResource("13_mefvt")
+
+[node name="sfx_z_index" type="Node2D" parent="."]
+position = Vector2(-640, -360)
+z_index = 50
+
+[node name="screenspace_vfx" type="TextureRect" parent="sfx_z_index"]
+material = SubResource("ShaderMaterial_qcjpt")
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("1_44b2x")
+script = ExtResource("35_fh6ew")
 
 [node name="audio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("31_l4ojg")

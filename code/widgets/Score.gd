@@ -18,6 +18,8 @@ func _ready():
 	update_score(combo)
 
 func update_score(c):
+	var prev_digits = [] + digits
+	
 	c = int(floor(c))
 	combo = c
 	if combo > renderCombo:
@@ -32,10 +34,18 @@ func update_score(c):
 	digits.reverse()
 	update_sprites()
 	
+	if prev_digits != digits:
+		for x in range( max(len(digits), len(prev_digits)) ):
+			if x < len(digits) and x < len(prev_digits):
+				if digits[x] != prev_digits[x]:
+					sprites[x].t = 0 
+			else:
+				sprites[x].t = 0 
+	
 	
 func update_sprites():
 	while len(sprites)<len(digits):
-		sprites.append(Sprite2D.new())
+		sprites.append(ComboSprite.new())
 		sprites[len(sprites)-1].z_index = 75
 		sprites[len(sprites)-1].scale = Vector2(.5,.5)
 		add_child(sprites[len(sprites)-1])

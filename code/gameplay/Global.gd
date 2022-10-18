@@ -18,6 +18,8 @@ var hp
 var health = 256
 var MAX_HP = 256
 
+var worst_hit = 0
+
 var user_settings = UserSettings.new()
 var results = Results.new()
 
@@ -139,7 +141,11 @@ func DoHitError(t):
 func DoJudge(j, column):
 	if j == -1:
 		j = 5
-	judge.judge(j)
+	if j >= user_settings.hide_judgements_below:
+		judge.judge(j)
+		
+	if j > worst_hit:
+		worst_hit = j
 	
 	jCount[j] += 1
 	counts.text = ""

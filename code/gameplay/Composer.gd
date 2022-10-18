@@ -38,6 +38,7 @@ var chart = null
 
 func _ready():
 	Global.composer = self
+	Global.worst_hit = 0
 	
 	t_song_zero = Time.get_ticks_usec()+(3*usec)
 	
